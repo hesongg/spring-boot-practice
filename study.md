@@ -88,4 +88,57 @@
 	
 	- 대부분의 케이스에서 스프링 빈은 싱글톤으로 사용함
 	
-- 회원 웹 기능 - 홈화면추가부터.. 이어서 보기
+- 회원 웹 기능
+	- 컨트롤러 메서드에서 return "redirect:/"; 를 사용해 리다이렉트 가능
+	
+	- 컨트롤러 메서드의 파라미터 model 객체의 addAttribute를 통해 list 데이터를 담은 후 화면으로 리다이렉트 시켜주면
+		화면에서 타임리프 th:each 문법으로 리스트의 데이터를 하나씩 꺼내어 사용 가능 
+		```html
+		<tr th:each="member : ${members}">
+			<td th:text="${member.id}"></td>
+			<td th:text="${member.name}"></td>
+		</tr>
+		```
+
+- Repository 구현
+	- DataSource는 데이터베이스 커넥션을 획득할 때 사용하는 객체다. 
+		- 스프링 부트는 데이터베이스 커넥션 정보를 바탕으로 DataSource를 생성하고 스프링 빈으로 만들어둔다. 그래서 DI를 받을 수 있다.
+		
+- Spring 테스트 시
+	- @SpringBootTest
+		- 스프링 테스트하기위한 어노테이션 -> 스프링 컨테이너와 테스트 함께 실행
+	- @Transactional
+		- 테스트 클래스에 해당 어노테이션을 붙이면 테스트가 끝난 후 테스트한 데이터 롤백 시켜줌 -> 다음 테스트에 영향을 주지 않음
+	- @Commit
+		- @Transactional 어노테이션이 있어도 커밋을 수행함
+		
+- 생성자가 하나만 있을 때는, @Autowired 태그 생략 가능
+
+- JPA 
+	- ORM (객체를 관계형 데이터베이스에 맵핑하는 기술)
+	- JPA는 인터페이스, hibernate는 JPA 구현한 기술이라 볼 수 있다.
+	
+	- JPA 사용할 때 기본 properties 설정 후, 도메인 객체를 구현한다.
+		- 도메인 클래스에 @Entity 어노테이션
+			- JPA가 관리하는 엔티티라고 표시
+		
+		- @Id : 해당 변수가 테이블의 pk임을 표시
+		- @GeneratedValue(strategy = GenerationType.IDENTITY)
+			- DB가 ID를 자동 생성해주는 것을 아이덴티티 전략이라고 함
+		- @Column(name = "username")
+			- DB와 변수 명이 다를 때 @Column 어노테이션을 사용해서 설정 가능
+			
+	- JPA Repository 구현
+		- private final EntityManager em;
+			- JPA 사용 시, 스프링에서 자동으로 EntityManager를 생성해준다.
+			- repository 생성자에서 스프링에서 자동으로 생성해준 EntityManager를 DI받으면 된다.
+			
+	- JPA 사용 시 모든 데이터 변경이 @Transactional 안에서 수행되어야 함
+	
+- 스프링 데이터 JPA
+	- 스프링에서 제공하는 JpaRepository 를 상속받아 repositry 인터페이스를 만들어놓으면 
+		스프링 데이터 JPA는 구현체를 만들어서 자동으로 bean으로 등록해준다.
+		
+	- 스프링 데이터 JPA Repository 구현 시 메서드 이름 규칙(ex. findBy...)으로 커스텀 select 메서드 구현 가능
+
+- AOP 부터 이어서 보기
